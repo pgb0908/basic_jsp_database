@@ -92,11 +92,120 @@ public class MemberDAO {
             // 쿼리를 실행 시킨 결과를 리턴해서 받아줌(오라클 테이블의 검색된 결과를 자바객체에 저장)
             rs = pstmt.executeQuery();
 
-        }catch(Exception e) {
+            while (rs.next()) {
+                MemberBean bean = new MemberBean();
+                bean.setId(rs.getString(1));
+                bean.setPass1(rs.getString(2));
+                bean.setEmail(rs.getString(3));
+                bean.setTel(rs.getString(4));
+                bean.setHobby(rs.getString(5));
+                bean.setJob(rs.getString(6));
+                bean.setAge(rs.getString(7));
+                bean.setInfo(rs.getString(8));
+
+                v.add(bean);
+            }
+
+            con.close();
+
+        } catch (Exception e) {
 
         }
 
         return v;
 
+    }
+
+    public MemberBean oneSelectMember(String id) {
+
+        MemberBean bean = new MemberBean();
+
+        try {
+            getCon();
+
+            String sql = "select * from member where id=?";
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, id);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                bean.setId(rs.getString(1));
+                bean.setPass1(rs.getString(2));
+                bean.setEmail(rs.getString(3));
+                bean.setTel(rs.getString(4));
+                bean.setHobby(rs.getString(5));
+                bean.setJob(rs.getString(6));
+                bean.setAge(rs.getString(7));
+                bean.setInfo(rs.getString(8));
+            }
+
+            con.close();
+
+        } catch (Exception e) {
+
+        }
+
+        return bean;
+    }
+
+
+    public String getPass(String id) {
+        String pass = "";
+
+        try {
+            getCon();
+
+            String sql = "select pass1 from member where id=?";
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, id);
+            rs = pstmt.executeQuery();
+
+            if (rs.next()) {
+                pass = rs.getString(1);
+            }
+
+            con.close();
+        }catch(Exception e) {
+
+        }
+
+
+        return pass;
+    }
+
+    public void updateMember(MemberBean bean) {
+        getCon();
+
+        try {
+            String sql = "update member set email=?,tel=? where id=?";
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, bean.getEmail());
+            //System.out.println(bean.getEmail());
+            pstmt.setString(2, bean.getTel());
+            pstmt.setString(3, bean.getId());
+            //System.out.println(bean.getId());
+
+            pstmt.executeUpdate();
+
+            con.close();
+        } catch (Exception e) {
+
+        }
+    }
+
+    public void deleteMember(String id) {
+        getCon();
+
+        try {
+            String sql = "delete from member where id=?";
+            pstmt = con.prepareStatement(sql);
+            pstmt.setString(1, id);
+
+            pstmt.executeUpdate();
+
+            con.close();
+        } catch(Exception e) {
+
+        }
     }
 }
